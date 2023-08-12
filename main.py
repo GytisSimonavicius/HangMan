@@ -12,24 +12,24 @@ class HangmanGame:
         self.guessed_letters = set()
         self.current_attempts = 0
         category = random.choice(list(words.keys()))
-        self.secret_word = random.choice(words[category]).lower()
+        self.secret_word = random.choice(words[category])
 
         print(f"Your word is from category: {category}")
 
+
     def make_guess(self, guess):
-        guess = guess.lower()
         if len(guess) == 1 and guess.isalpha():
             if guess in self.guessed_letters:
                 print('You have already guessed this letter.')
             else:
                 self.guessed_letters.add(guess)
-                if guess not in self.secret_word.lower():
+                if guess not in self.secret_word:
                     self.current_attempts += 1
         elif len(guess) > 1 and guess.isalpha():
             if guess == self.secret_word.lower():
-                self.guessed_letters = set(self.secret_word.lower())
+                self.guessed_letters = set(self.secret_word)
             else:
-                self.current_attempts += 1
+                self.current_attempts = self.max_attempts  # Set attempts to maximum (lose)
         else:
             print('Invalid guess. Please enter alphabet character or the full word.')
 
@@ -68,6 +68,7 @@ def game():
             break
         elif status == 'lose':
             print("You've lost the game. Better luck next time!")
+            print(f"The correct word was: {game.secret_word}")
             break
 
 if __name__ == '__main__':
