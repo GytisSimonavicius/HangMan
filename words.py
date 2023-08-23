@@ -26,7 +26,7 @@ words = {
     "countries": [
         "moldova", "georgia", "estonia", "poland", "brazil", "canada", "australia", "india",
         "thailand", "argentina", "germany", "italy", "spain", "greece", "egypt", "china", "japan",
-        "russia", "turkey", "mexico", "bahrain", "kenya", "morocco", "ireland", "colombia", "norway",
+        "turkey", "mexico", "bahrain", "kenya", "morocco", "ireland", "colombia", "norway",
         "switzerland", "netherlands", "vietnam", "singapore", "new zealand"
     ],
 }

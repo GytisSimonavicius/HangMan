@@ -1,5 +1,6 @@
 import random
 from words import words
+from hangman_art import hangman_logo, hangman_art
 
 class HangmanGame:
     def __init__(self, max_attempts):
@@ -46,30 +47,57 @@ class HangmanGame:
         incorrect_letters = [letter for letter in self.guessed_letters if letter not in self.secret_word]
         return filled_word_letters, self.max_attempts - self.current_attempts, incorrect_letters
 
+def get_player_name():
+    player_name = input("Hello sir/madad. \nPlease enter your name: ")
+    return player_name
+
+def ask_to_play():
+    while True:
+        play_choice = input("Would you like to play Hangman? (yes/no): ").lower()
+
+        if play_choice == "no":
+            print("Thank you for considering! Have a great day!")
+            return False
+        elif play_choice == "yes":
+            return True
+        else:
+            print("Invalid choice. Please enter 'yes' or 'no'.")
+
 def game():
     guess_attempts = 10
-    game = HangmanGame(guess_attempts)
-    game.start_new_game()
+
+    player_name = get_player_name()
+    print(f"Hello, {player_name}!")
 
     while True:
-        guess = input("Enter your guess: ").lower()
-        game.make_guess(guess)
-
-        status = game.check_game_status()
-
-        if status == 'continue':
-            filled_word_letters, attempts_left, incorrect_letters = game.get_current_guesses()
-            print(f"Current guessed letters: {filled_word_letters}")
-            print(f'Attempts left: {attempts_left}')
-            print(f"Incorrect Letters: {' '.join(incorrect_letters)}")
-        elif status == 'win':
-            print("Congratulations! You've won the game!")
-            print(f"You guessed the word: {game.secret_word}")
+        if not ask_to_play():
             break
-        elif status == 'lose':
-            print("You've lost the game. Better luck next time!")
-            print(f"The correct word was: {game.secret_word}")
-            break
+        
+        print("Welcome to Hangman Game!")
+        print(hangman_logo[0])
+        game = HangmanGame(guess_attempts)
+        game.start_new_game()
+        while True:
+            guess = input("\nEnter your guess(letter or even full word): ").lower()
+            game.make_guess(guess)
+
+            status = game.check_game_status()
+
+            if status == 'continue':
+                filled_word_letters, attempts_left, incorrect_letters = game.get_current_guesses()
+                print(f"\nCurrent guessed letters: {filled_word_letters}")
+                print(f'\nAttempts left: {attempts_left}')
+                print(f"\nIncorrect Letters: {' '.join(incorrect_letters)}")
+                print(hangman_art[])
+
+            elif status == 'win':
+                print("Congratulations! You've won the game!")
+                print(f"You guessed the word: {game.secret_word}")
+                break
+            elif status == 'lose':
+                print("You've lost the game. Better luck next time!")
+                print(f"The correct word was: {game.secret_word}")
+                break
 
 if __name__ == '__main__':
     game()
