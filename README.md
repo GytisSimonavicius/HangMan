@@ -8,7 +8,7 @@ Welcome to the Hangman Game! This is a simple python cli game where players try 
 
 To run this Hangman Game, you need:
 
-- Python (version 3.6 or higher)
+- Python (version 3 or higher)
 
 ### Installation
 

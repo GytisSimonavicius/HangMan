@@ -1,13 +1,14 @@
 import random
+from typing import Set, List
 from words import words
 from hangman_art import hangman_logo, hangman
 
 class HangmanGame:
-    def __init__(self, max_attempts):
-        self.secret_word = ''
-        self.max_attempts = max_attempts
-        self.guessed_letters = set()
-        self.current_attempts = 0
+    def __init__(self, max_attempts: int):
+        self.secret_word: str = ''
+        self.max_attempts: int = max_attempts
+        self.guessed_letters: Set[str] = set()
+        self.current_attempts: int = 0
 
     def start_new_game(self):
         self.guessed_letters = set()
@@ -15,7 +16,7 @@ class HangmanGame:
         category = random.choice(list(words.keys()))
         self.secret_word = random.choice(words[category])
 
-    def make_guess(self, guess):
+    def make_guess(self, guess: str):
         if len(guess) == 1 and guess.isalpha():
             if guess in self.guessed_letters:
                 print('You have already guessed this letter.')
@@ -31,7 +32,7 @@ class HangmanGame:
         else:
             print('Invalid guess. Please enter alphabet character or the full word.')
 
-    def check_game_status(self):
+    def check_game_status(self) -> str:
         if all(letter in self.guessed_letters for letter in self.secret_word):
             return 'win'
         elif self.current_attempts >= self.max_attempts:
@@ -39,51 +40,65 @@ class HangmanGame:
         else:
             return 'continue'
 
-    def get_current_state(self):
+    def get_current_state(self) -> List[str]:
         current_state = [letter if letter in self.guessed_letters else '-' for letter in self.secret_word]
         return current_state
     
-    def visualize_hangman(self):
-        hangman_stage = hangman[self.current_attempts - self.max_attempts-1]
+    def visualize_hangman(self) -> str:
+        hangman_stage = hangman[self.current_attempts - self.max_attempts - 1]
         return hangman_stage
     
-    def get_available_letters(self):
+    
+    def get_available_letters(self) -> List[str]:
         alphabet = 'abcdefghijklmnopqrstuvwxyz'
         available_letters = [letter for letter in alphabet if letter not in self.guessed_letters]
         return available_letters
     
-    def get_incorrect_letters(self):
+    def get_incorrect_letters(self) -> List[str]:
         incorrect_letters = [letter for letter in self.guessed_letters if letter not in self.secret_word]
         return incorrect_letters
 
 class Personalization:
     def __init__(self):
-        self.player_name = ""
+        self.player_name: str = ""
 
-    def get_player_name(self):
+    def get_player_name(self) -> None:
         self.player_name = input("Hello sir/madam. Welcome to the Hangman game app.\nPlease enter your name: ")
 
-    def ask_to_play(self):
-        play_choice = input("Would you like to play Hangman? (yes/no): ").lower()
-        return play_choice == "yes"
+    def ask_to_play(self) -> bool:
+        while True:
+            play_choice = input("Would you like to play Hangman? (yes/no): ").lower()
+            if play_choice == "yes":
+                return True
+            elif play_choice == "no":
+                return False
+            else:
+                print("Invalid input. Please enter 'yes' or 'no'.")
 
-    def choose_word_category(self):
+    def choose_word_category(self) -> str:
         categories = list(words.keys())
         print("Choose a word category:")
         for index, category in enumerate(categories, start=1):
-            print(f"{index}. {category}")
-        category_choice = int(input("Enter the number of your choice: ")) - 1
-        if 0 <= category_choice < len(categories):
-            return categories[category_choice]
-        else:
-            print("Invalid category choice. Random category will be selected.")
-            return random.choice(categories)
+            print(f"{index}. {category.capitalize()}")
+        while True:
+            try:
+                category_choice = input("Enter the number of your choice (or leave empty for random selection): ")
+                if not category_choice:
+                    return random.choice(categories)
+                category_choice = int(category_choice) - 1
+                if 0 <= category_choice < len(categories):
+                    return categories[category_choice]
+                else:
+                    print("Invalid category number. Please enter a valid number.")
+            except ValueError:
+                print("Invalid input. Please enter a valid number.")
 
-def game():
-    guess_attempts = 10
+
+def game() -> None:
+    guess_attempts: int = 10
     personalization = Personalization()
     personalization.get_player_name()
-    player_name = personalization.player_name
+    player_name: str = personalization.player_name
     print(f"Hello, {player_name}!")
 
     while personalization.ask_to_play():
@@ -112,10 +127,10 @@ def game():
 
                 if status == 'continue':
                     print(game.visualize_hangman())
-                    print(f"\nCurrent stage: {game.get_current_state()}")
+                    print(f'\nCurrent state: {"".join(game.get_current_state())}')
                     print(f'Available letters: {", ".join(game.get_available_letters())}')
                     print(f'Incorrect letters: {", ".join(game.get_incorrect_letters())}')
-                    print(f'\nAttempts left: {game.max_attempts-game.current_attempts}')
+                    print(f'\nAttempts left: {game.max_attempts - game.current_attempts}')
                 elif status == 'win':
                     print(game.visualize_hangman())
                     print("Congratulations! You've won the game!")
