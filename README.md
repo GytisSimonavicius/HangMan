@@ -15,7 +15,7 @@ To run this Hangman Game, you need:
 1. Clone the repository to your local machine:
 
    ```bash
-   git clone https://github.com/
+   git clone https://github.com/GytisSimonavicius/HangMan.git
 
 2. Go to the projects direktory
 

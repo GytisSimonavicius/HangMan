@@ -15,12 +15,6 @@ class HangmanGame:
         category = random.choice(list(words.keys()))
         self.secret_word = random.choice(words[category])
 
-        print(f"Your word is from category: {category}")
-        print(hangman[0])
-        print(f"secret word {self.secret_word}")
-
-
-
     def make_guess(self, guess):
         if len(guess) == 1 and guess.isalpha():
             if guess in self.guessed_letters:
@@ -45,69 +39,98 @@ class HangmanGame:
         else:
             return 'continue'
 
-    def get_current_guesses(self):
-        filled_word_letters = [letter if letter in self.guessed_letters else '-' for letter in self.secret_word]
-        incorrect_letters = [letter for letter in self.guessed_letters if letter not in self.secret_word]
-        return filled_word_letters, self.max_attempts - self.current_attempts, incorrect_letters
+    def get_current_state(self):
+        current_state = [letter if letter in self.guessed_letters else '-' for letter in self.secret_word]
+        return current_state
     
     def visualize_hangman(self):
         hangman_stage = hangman[self.current_attempts - self.max_attempts-1]
         return hangman_stage
+    
+    def get_available_letters(self):
+        alphabet = 'abcdefghijklmnopqrstuvwxyz'
+        available_letters = [letter for letter in alphabet if letter not in self.guessed_letters]
+        return available_letters
+    
+    def get_incorrect_letters(self):
+        incorrect_letters = [letter for letter in self.guessed_letters if letter not in self.secret_word]
+        return incorrect_letters
 
+class Personalization:
+    def __init__(self):
+        self.player_name = ""
 
-def get_player_name():
-    player_name = input("Hello sir/madad. \nPlease enter your name: ")
-    return player_name
+    def get_player_name(self):
+        self.player_name = input("Hello sir/madam. Welcome to the Hangman game app.\nPlease enter your name: ")
 
-def ask_to_play():
-    while True:
+    def ask_to_play(self):
         play_choice = input("Would you like to play Hangman? (yes/no): ").lower()
+        return play_choice == "yes"
 
-        if play_choice == "no":
-            print("Thank you for considering! Have a great day!")
-            return False
-        elif play_choice == "yes":
-            return True
+    def choose_word_category(self):
+        categories = list(words.keys())
+        print("Choose a word category:")
+        for index, category in enumerate(categories, start=1):
+            print(f"{index}. {category}")
+        category_choice = int(input("Enter the number of your choice: ")) - 1
+        if 0 <= category_choice < len(categories):
+            return categories[category_choice]
         else:
-            print("Invalid choice. Please enter 'yes' or 'no'.")
+            print("Invalid category choice. Random category will be selected.")
+            return random.choice(categories)
 
 def game():
     guess_attempts = 10
-
-    player_name = get_player_name()
+    personalization = Personalization()
+    personalization.get_player_name()
+    player_name = personalization.player_name
     print(f"Hello, {player_name}!")
 
-    while True:
-        if not ask_to_play():
-            break
-        
+    while personalization.ask_to_play():
         print("Welcome to Hangman Game!")
         print(hangman_logo[0])
-        game = HangmanGame(guess_attempts)
-        game.start_new_game()
+        print(hangman[0])
+
         while True:
-            guess = input("\nEnter your guess(letter or even full word): ").lower()
-            game.make_guess(guess)
+            game = HangmanGame(guess_attempts)
+            game.start_new_game()
 
-            status = game.check_game_status()
+            word_category = personalization.choose_word_category()
+            if word_category != "":
+                game.secret_word = random.choice(words[word_category])
 
-            if status == 'continue':
-                filled_word_letters, attempts_left, incorrect_letters = game.get_current_guesses()
-                print(f"\nCurrent guessed letters: {filled_word_letters}")
-                print(f'\nAttempts left: {attempts_left}')
-                # print(f"secret word {game.secret_word}")
-                print(f"\nIncorrect Letters: {' '.join(incorrect_letters)}")
-                print(game.visualize_hangman())
+            print(f"Your word is from category: {word_category}")
+            print(hangman[0])
+            print(f'Available letters: {", ".join(game.get_available_letters())}')
 
-            elif status == 'win':
-                print("Congratulations! You've won the game!")
-                print(f"You guessed the word: {game.secret_word}")
-                break
-            elif status == 'lose':
-                print("You've lost the game. Better luck next time!")
-                print(game.visualize_hangman())
-                print(f"The correct word was: {game.secret_word}")
-                break
+            while True:
+                guess = input("\nEnter your guess (letter or even the full word): ").lower()
+
+                game.make_guess(guess)
+
+                status = game.check_game_status()
+
+                if status == 'continue':
+                    print(game.visualize_hangman())
+                    print(f"\nCurrent stage: {game.get_current_state()}")
+                    print(f'Available letters: {", ".join(game.get_available_letters())}')
+                    print(f'Incorrect letters: {", ".join(game.get_incorrect_letters())}')
+                    print(f'\nAttempts left: {game.max_attempts-game.current_attempts}')
+                elif status == 'win':
+                    print(game.visualize_hangman())
+                    print("Congratulations! You've won the game!")
+                    print(f"You guessed the word: {game.secret_word}")
+                    break
+                elif status == 'lose':
+                    print("You've lost the game. Better luck next time!")
+                    print(game.visualize_hangman())
+                    print(f"The correct word was: {game.secret_word}")
+                    break
+
+            play_again = input("\nDo you want to play again? (yes/no): ").lower()
+            if play_again != "yes":
+                print("Thank you for playing Hangman! Goodbye.")
+                return
 
 if __name__ == '__main__':
     game()
