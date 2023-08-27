@@ -1,6 +1,6 @@
 import random
 from words import words
-from hangman_art import hangman_logo, hangman_art
+from hangman_art import hangman_logo, hangman
 
 class HangmanGame:
     def __init__(self, max_attempts):
@@ -16,6 +16,9 @@ class HangmanGame:
         self.secret_word = random.choice(words[category])
 
         print(f"Your word is from category: {category}")
+        print(hangman[0])
+        print(f"secret word {self.secret_word}")
+
 
 
     def make_guess(self, guess):
@@ -30,7 +33,7 @@ class HangmanGame:
             if guess == self.secret_word.lower():
                 self.guessed_letters = set(self.secret_word)
             else:
-                self.current_attempts = self.max_attempts  # Set attempts to maximum (lose)
+                self.current_attempts = self.max_attempts  
         else:
             print('Invalid guess. Please enter alphabet character or the full word.')
 
@@ -46,6 +49,11 @@ class HangmanGame:
         filled_word_letters = [letter if letter in self.guessed_letters else '-' for letter in self.secret_word]
         incorrect_letters = [letter for letter in self.guessed_letters if letter not in self.secret_word]
         return filled_word_letters, self.max_attempts - self.current_attempts, incorrect_letters
+    
+    def visualize_hangman(self):
+        hangman_stage = hangman[self.current_attempts - self.max_attempts-1]
+        return hangman_stage
+
 
 def get_player_name():
     player_name = input("Hello sir/madad. \nPlease enter your name: ")
@@ -87,8 +95,9 @@ def game():
                 filled_word_letters, attempts_left, incorrect_letters = game.get_current_guesses()
                 print(f"\nCurrent guessed letters: {filled_word_letters}")
                 print(f'\nAttempts left: {attempts_left}')
+                # print(f"secret word {game.secret_word}")
                 print(f"\nIncorrect Letters: {' '.join(incorrect_letters)}")
-                print(hangman_art[])
+                print(game.visualize_hangman())
 
             elif status == 'win':
                 print("Congratulations! You've won the game!")
@@ -96,6 +105,7 @@ def game():
                 break
             elif status == 'lose':
                 print("You've lost the game. Better luck next time!")
+                print(game.visualize_hangman())
                 print(f"The correct word was: {game.secret_word}")
                 break
 
