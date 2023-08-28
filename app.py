@@ -1,3 +1,4 @@
+import os
 import random
 from typing import Set, List
 from words import words
@@ -76,6 +77,7 @@ class Personalization:
             else:
                 print("Invalid input. Please enter 'yes' or 'no'.")
 
+
     def choose_word_category(self) -> str:
         categories = list(words.keys())
         print("Choose a word category:")
@@ -97,7 +99,7 @@ class Personalization:
 
 def game() -> None:
     guess_attempts: int = 10
-    welcome = pyfiglet.figlet_format("Hello sir/madam. \n Welcome to: ")
+    welcome = pyfiglet.figlet_format("Hello sir / madam. \n Welcome to: ")
     hangman_game_logo = pyfiglet.figlet_format("Hangman game!")
     print(welcome)
     print(hangman_game_logo)
@@ -105,9 +107,11 @@ def game() -> None:
     personalization.get_player_name()
     player_name: str = personalization.player_name
     name_visualization = pyfiglet.figlet_format(f"Hello {player_name}")
+    os.system('clear')
     print(name_visualization)
 
     while personalization.ask_to_play():
+        os.system('clear')
         hangman_game_logo = pyfiglet.figlet_format("Hangman!")
         print(hangman_game_logo)
         print(hangman[0])
@@ -115,13 +119,13 @@ def game() -> None:
         while True:
             game = HangmanGame(guess_attempts)
             game.start_new_game()
-
             word_category = personalization.choose_word_category()
+            os.system('clear')
             if word_category != "":
                 game.secret_word = random.choice(words[word_category])
 
-            print(f"Your word is from category: {word_category}")
             print(hangman[0])
+            print(f"Your word is from category: {word_category}")
             print(f'Available letters: {", ".join(game.get_available_letters())}')
 
             while True:
@@ -131,12 +135,15 @@ def game() -> None:
 
                 status = game.check_game_status()
                 correct_word = pyfiglet.figlet_format(game.secret_word)
+
+                os.system('clear')
                 if status == 'continue':
                     current_state = "".join(game.get_current_state())
                     available_letters = ", ".join(game.get_available_letters())
                     incorrect_letters = ", ".join(game.get_incorrect_letters())
                     visualize_current_state = pyfiglet.figlet_format(current_state)
                     print(game.visualize_hangman())
+                    print(f"Your word is from category: {word_category}")
                     print(visualize_current_state)
                     print(f'Available letters: {available_letters}')
                     print(f'Incorrect letters: {incorrect_letters}')
@@ -159,6 +166,7 @@ def game() -> None:
 
             play_again = input("\nDo you want to play again? (yes/no): ").lower()
             if play_again != "yes":
+                os.system('clear')
                 print("Thank you for playing Hangman!")
                 goodbye = pyfiglet.figlet_format("Goodbye!")
                 print(goodbye)
