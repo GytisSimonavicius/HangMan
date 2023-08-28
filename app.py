@@ -1,7 +1,8 @@
 import random
 from typing import Set, List
 from words import words
-from hangman_art import hangman_logo, hangman
+import pyfiglet
+from hangman_art import hangman
 
 class HangmanGame:
     def __init__(self, max_attempts: int):
@@ -41,7 +42,7 @@ class HangmanGame:
             return 'continue'
 
     def get_current_state(self) -> List[str]:
-        current_state = [letter if letter in self.guessed_letters else '-' for letter in self.secret_word]
+        current_state = [letter if letter in self.guessed_letters else ' _ ' for letter in self.secret_word]
         return current_state
     
     def visualize_hangman(self) -> str:
@@ -63,7 +64,7 @@ class Personalization:
         self.player_name: str = ""
 
     def get_player_name(self) -> None:
-        self.player_name = input("Hello sir/madam. Welcome to the Hangman game app.\nPlease enter your name: ")
+        self.player_name = input("Please enter your name: ")
 
     def ask_to_play(self) -> bool:
         while True:
@@ -96,14 +97,19 @@ class Personalization:
 
 def game() -> None:
     guess_attempts: int = 10
+    welcome = pyfiglet.figlet_format("Hello sir/madam. \n Welcome to: ")
+    hangman_game_logo = pyfiglet.figlet_format("Hangman game!")
+    print(welcome)
+    print(hangman_game_logo)
     personalization = Personalization()
     personalization.get_player_name()
     player_name: str = personalization.player_name
-    print(f"Hello, {player_name}!")
+    name_visualization = pyfiglet.figlet_format(f"Hello {player_name}")
+    print(name_visualization)
 
     while personalization.ask_to_play():
-        print("Welcome to Hangman Game!")
-        print(hangman_logo[0])
+        hangman_game_logo = pyfiglet.figlet_format("Hangman!")
+        print(hangman_game_logo)
         print(hangman[0])
 
         while True:
@@ -124,27 +130,38 @@ def game() -> None:
                 game.make_guess(guess)
 
                 status = game.check_game_status()
-
+                correct_word = pyfiglet.figlet_format(game.secret_word)
                 if status == 'continue':
+                    current_state = "".join(game.get_current_state())
+                    available_letters = ", ".join(game.get_available_letters())
+                    incorrect_letters = ", ".join(game.get_incorrect_letters())
+                    visualize_current_state = pyfiglet.figlet_format(current_state)
                     print(game.visualize_hangman())
-                    print(f'\nCurrent state: {"".join(game.get_current_state())}')
-                    print(f'Available letters: {", ".join(game.get_available_letters())}')
-                    print(f'Incorrect letters: {", ".join(game.get_incorrect_letters())}')
+                    print(visualize_current_state)
+                    print(f'Available letters: {available_letters}')
+                    print(f'Incorrect letters: {incorrect_letters}')
                     print(f'\nAttempts left: {game.max_attempts - game.current_attempts}')
                 elif status == 'win':
                     print(game.visualize_hangman())
-                    print("Congratulations! You've won the game!")
-                    print(f"You guessed the word: {game.secret_word}")
+                    win = pyfiglet.figlet_format("Congratulations!")
+                    print(win)
+                    print("You guessed the word:")
+                    print(correct_word)
                     break
                 elif status == 'lose':
-                    print("You've lost the game. Better luck next time!")
                     print(game.visualize_hangman())
-                    print(f"The correct word was: {game.secret_word}")
+                    lost = pyfiglet.figlet_format("You've Lost")
+                    print(lost)
+                    print("The correct word was:")
+                    print(correct_word)
+                    
                     break
 
             play_again = input("\nDo you want to play again? (yes/no): ").lower()
             if play_again != "yes":
-                print("Thank you for playing Hangman! Goodbye.")
+                print("Thank you for playing Hangman!")
+                goodbye = pyfiglet.figlet_format("Goodbye!")
+                print(goodbye)
                 return
 
 if __name__ == '__main__':
