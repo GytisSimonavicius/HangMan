@@ -22,6 +22,12 @@ To run this Hangman Game, you need:
    ```bash
    cd HANGMAN
 
+3. Install requirements
+
+   ```bash
+   pip install -r requirements.txt
+
+
 ### Play
 
 1. Run the game by runing python file:
