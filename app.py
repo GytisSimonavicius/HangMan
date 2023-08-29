@@ -18,8 +18,9 @@ class HangmanGame:
         category = random.choice(list(words.keys()))
         self.secret_word = random.choice(words[category])
 
-    def make_guess(self, guess: str) -> None:
+    def make_guess(self, guess):
         try:
+            guess = guess.lower()
             if len(guess) == 1 and guess.isalpha():
                 if guess in self.guessed_letters:
                     print('You have already guessed this letter.')
@@ -28,16 +29,14 @@ class HangmanGame:
                     if guess not in self.secret_word:
                         self.current_attempts += 1
             elif len(guess) > 1 and guess.isalpha():
-                if guess.lower() == self.secret_word.lower():
+                if guess == self.secret_word:
                     self.guessed_letters = set(self.secret_word)
                 else:
-                    self.current_attempts += 1
-                    if self.current_attempts >= self.max_attempts:
-                        print('Sorry, you are out of attempts!')
+                    self.current_attempts = self.max_attempts
             else:
-                raise ValueError 
+                raise ValueError
         except ValueError:
-            print("Invalid input. Please enter 'yes' or 'no'.")
+            print('Invalid guess. Please enter an alphabetical character or the full word.')
 
     def check_game_status(self) -> str:
         if all(letter in self.guessed_letters for letter in self.secret_word):
@@ -179,7 +178,7 @@ def game() -> None:
                     print("Thank you for playing Hangman!")
                     goodbye = pyfiglet.figlet_format("Goodbye!")
                     print(goodbye)
-                    break  
+                    return
                 else:
                     raise ValueError
             except ValueError:
