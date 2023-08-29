@@ -1,38 +1,43 @@
 import os
 import random
 from typing import Set, List
-from words import words
 import pyfiglet
+from words import words
 from hangman_art import hangman
 
 class HangmanGame:
-    def __init__(self, max_attempts: int):
+    def __init__(self, max_attempts: int) -> None:
         self.secret_word: str = ''
         self.max_attempts: int = max_attempts
         self.guessed_letters: Set[str] = set()
         self.current_attempts: int = 0
 
-    def start_new_game(self):
+    def start_new_game(self) -> None:
         self.guessed_letters = set()
         self.current_attempts = 0
         category = random.choice(list(words.keys()))
         self.secret_word = random.choice(words[category])
 
-    def make_guess(self, guess: str):
-        if len(guess) == 1 and guess.isalpha():
-            if guess in self.guessed_letters:
-                print('You have already guessed this letter.')
-            else:
-                self.guessed_letters.add(guess)
-                if guess not in self.secret_word:
+    def make_guess(self, guess: str) -> None:
+        try:
+            if len(guess) == 1 and guess.isalpha():
+                if guess in self.guessed_letters:
+                    print('You have already guessed this letter.')
+                else:
+                    self.guessed_letters.add(guess)
+                    if guess not in self.secret_word:
+                        self.current_attempts += 1
+            elif len(guess) > 1 and guess.isalpha():
+                if guess.lower() == self.secret_word.lower():
+                    self.guessed_letters = set(self.secret_word)
+                else:
                     self.current_attempts += 1
-        elif len(guess) > 1 and guess.isalpha():
-            if guess == self.secret_word.lower():
-                self.guessed_letters = set(self.secret_word)
+                    if self.current_attempts >= self.max_attempts:
+                        print('Sorry, you are out of attempts!')
             else:
-                self.current_attempts = self.max_attempts  
-        else:
-            print('Invalid guess. Please enter alphabet character or the full word.')
+                raise ValueError 
+        except ValueError:
+            print("Invalid input. Please enter 'yes' or 'no'.")
 
     def check_game_status(self) -> str:
         if all(letter in self.guessed_letters for letter in self.secret_word):
@@ -69,14 +74,18 @@ class Personalization:
 
     def ask_to_play(self) -> bool:
         while True:
-            play_choice = input("Would you like to play Hangman? (yes/no): ").lower()
-            if play_choice == "yes":
-                return True
-            elif play_choice == "no":
-                return False
-            else:
+            try:
+                play_choice = input("Would you like to play Hangman? (yes/no): ").lower()
+                if play_choice == "yes":
+                    return True
+                elif play_choice == "no":
+                    goodbye = pyfiglet.figlet_format("Goodbye!")
+                    print(goodbye)
+                    return False
+                else:
+                    raise ValueError
+            except ValueError:
                 print("Invalid input. Please enter 'yes' or 'no'.")
-
 
     def choose_word_category(self) -> str:
         categories = list(words.keys())
@@ -91,8 +100,6 @@ class Personalization:
                 category_choice = int(category_choice) - 1
                 if 0 <= category_choice < len(categories):
                     return categories[category_choice]
-                else:
-                    print("Invalid category number. Please enter a valid number.")
             except ValueError:
                 print("Invalid input. Please enter a valid number.")
 
@@ -115,7 +122,7 @@ def game() -> None:
         hangman_game_logo = pyfiglet.figlet_format("Hangman!")
         print(hangman_game_logo)
         print(hangman[0])
-
+        
         while True:
             game = HangmanGame(guess_attempts)
             game.start_new_game()
@@ -161,16 +168,22 @@ def game() -> None:
                     print(lost)
                     print("The correct word was:")
                     print(correct_word)
-                    
                     break
-
-            play_again = input("\nDo you want to play again? (yes/no): ").lower()
-            if play_again != "yes":
-                os.system('clear')
-                print("Thank you for playing Hangman!")
-                goodbye = pyfiglet.figlet_format("Goodbye!")
-                print(goodbye)
-                return
-
+            try:
+                play_again = input("\nDo you want to play again? (yes/no): ").lower()
+                if play_again == "yes":
+                    os.system('clear') 
+                    continue
+                elif play_again == "no":
+                    os.system('clear')
+                    print("Thank you for playing Hangman!")
+                    goodbye = pyfiglet.figlet_format("Goodbye!")
+                    print(goodbye)
+                    break  
+                else:
+                    raise ValueError
+            except ValueError:
+                print("Invalid input. Please enter 'yes' or 'no'.")
+                
 if __name__ == '__main__':
     game()
